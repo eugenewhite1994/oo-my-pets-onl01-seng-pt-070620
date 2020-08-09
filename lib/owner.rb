@@ -1,71 +1,79 @@
 class Owner
-  OWNERS = []
-  attr_accessor :name, :pets
-  attr_reader :species
 
-  def self.reset_all
-    OWNERS.clear
+  attr_accessor :cats, :dogs
+  attr_reader :name, :species
+
+  @@owners = []
+
+# instance methods
+
+  def initialize(name)
+    @name = name
+    @species = "human"
+    @@owners << self
+    @cats = []
+    @dogs = []
   end
 
-  def self.all
-    OWNERS
-  end
-
-  def self.count
-    OWNERS.size
-  end
-
-  def initialize(species)
-    @species = species
-    OWNERS << self
-    @pets = {:fishes => [], :dogs => [], :cats => []}
-  end
-
-  def buy_fish(name)
-    pets[:fishes] << Fish.new(name)
-  end
-
-  def buy_dog(name)
-    pets[:dogs] << Dog.new(name)
-  end
-
-  def buy_cat(name)
-    pets[:cats] << Cat.new(name)
-  end
-
-  def walk_dogs
-    pets[:dogs].each do |dog|
-      dog.mood = "happy"
-    end
-  end
-
-  def play_with_cats
-    pets[:cats].each do |cat|
-      cat.mood = "happy"
-    end
-  end
-
-  def feed_fish
-    pets[:fishes].each do |fish|
-      fish.mood = "happy"
-    end
-  end
-
-  def sell_pets
-    pets.each do |species, animals|
-      animals.each do |animal|
-        animal.mood = "nervous"
-      end
-      animals.clear
-    end
-  end
-
-  def say_species
+  def say_species()
     "I am a #{species}."
   end
 
+  def cats()
+    @cats
+  end
+
+  def dogs()
+    @dogs
+  end
+
+  def buy_cat(cat)
+    new_cat = Cat.new(cat,self)
+    @cats.push(new_cat) unless @cats.include?(new_cat)
+  end
+
+  def buy_dog(dog)
+    new_dog = Dog.new(dog,self)
+    @dogs.push(new_dog) unless @dogs.include?(new_dog)
+  end
+
+  def walk_dogs
+    @dogs.each {|dog| dog.mood = "happy"}
+  end
+
+  def feed_cats
+    @cats.each {|cat| cat.mood = "happy"}
+  end
+
+  def sell_pets
+    @dogs.each do |dog|
+      dog.mood = "nervous"
+      dog.owner = nil
+      @dogs.delete(dog)
+    end
+    @cats.each do |cat|
+      cat.mood = "nervous"
+      cat.owner = nil
+      @cats.delete(cat)
+    end
+  end
+
   def list_pets
-    "I have #{pets[:fishes].count} fish, #{pets[:dogs].count} dog(s), and #{pets[:cats].count} cat(s)."
+    "I have #{@dogs.count} dog(s), and #{@cats.count} cat(s)."
+  end
+
+#class methods
+
+  def self.all()
+    @@owners
+  end
+
+  def self.count()
+    @@owners.count
+  end
+
+  def self.reset_all()
+    @@owners = []
   end
 
 end
